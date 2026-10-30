@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Worksheet Anak Ceria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff4d6;--ink:#2d2a4a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1b33}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Baloo 2','Comic Sans MS',system-ui,sans-serif;min-height:100vh}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:8px;align-items:center;justify-content:center;padding:8px;background:#ffffffee;backdrop-filter:blur(6px);color:#2d2a4a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:10}
+button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 16px;background:#ff6b6b;color:#fff;cursor:pointer;box-shadow:0 3px 0 #c44}
+button:active{transform:translateY(2px);box-shadow:none}
+.bar span{min-width:90px;text-align:center;font-weight:800}
+.pg{display:none;max-width:980px;margin:14px auto;padding:20px;border-radius:28px;background:linear-gradient(160deg,#fff 0%,color-mix(in srgb,var(--c) 22%,#fff) 100%);border:6px solid var(--c);color:#2d2a4a;box-shadow:0 8px 24px #0003}
+.pg.on{display:block}
+h1{margin:0 0 4px;text-align:center;font-size:clamp(26px,5vw,42px);color:var(--c);text-shadow:2px 2px 0 #fff,3px 3px 0 #0002}
+.sub{text-align:center;margin:0 0 14px;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+.cell{background:#fff;border-radius:22px;border:3px solid color-mix(in srgb,var(--c) 55%,#fff);text-align:center;padding:8px 4px;cursor:pointer;user-select:none;transition:transform .15s}
+.cell:hover{transform:scale(1.07) rotate(-2deg)}
+.em{font-size:58px;line-height:1.15;display:inline-block;animation:fl 3s ease-in-out infinite;animation-delay:calc(var(--i)*-.4s)}
+.lb{font-weight:800;font-size:17px}
+.pop .em{animation:pop .6s}
+@keyframes fl{50%{transform:translateY(-6px) rotate(4deg)}}
+@keyframes pop{30%{transform:scale(1.6) rotate(-12deg)}60%{transform:scale(.9) rotate(8deg)}}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border-radius:22px;padding:8px 12px;margin-bottom:10px;border:3px solid color-mix(in srgb,var(--c) 55%,#fff)}
+.num{font-size:64px;font-weight:800;color:#fff;background:var(--c);border-radius:20px;min-width:84px;text-align:center;cursor:pointer;line-height:1.2}
+.row .em{font-size:44px;cursor:pointer}
+.pal{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.pal i{width:42px;height:42px;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 2px #0004;cursor:pointer;font-style:normal;display:grid;place-items:center}
+.pal i.sel{box-shadow:0 0 0 5px #2d2a4a;transform:scale(1.15)}
+.w .em{filter:grayscale(1) brightness(1.6) contrast(.5);transition:.2s}
+.w .cell.done .em{filter:none;color:transparent;text-shadow:0 0 0 var(--k)}
+.cert{text-align:center;font-size:20px}.cert input{font:inherit;font-size:26px;text-align:center;border:3px dashed var(--c);border-radius:14px;padding:6px;width:min(420px,90%);color:#2d2a4a;background:#fff}
+.mc{background:#fff}.mc:not(.open):not(.ok){background:var(--c)}.mc:not(.open):not(.ok) .em,.mc:not(.open):not(.ok) .lb{visibility:hidden}.mc:not(.open):not(.ok)::after{content:'❓';font-size:44px;display:block;margin-top:-72px;padding-bottom:20px}.mc.ok{opacity:.6}
+@media print{.mc .em,.mc .lb{visibility:visible!important}.mc::after{display:none!important}.bar,body::before{display:none}.pg{display:block!important;page-break-after:always;margin:0;box-shadow:none}}
+</style></head><body>
+<div class="bar"><button id="pv">◀ Mundur</button><span id="ind"></span><button id="nx">Lanjut ▶</button><button id="mt">🔊</button><button id="pr" title="Cetak">🖨️</button></div>
+<main id="app"></main>
+<script>
+const NM=['nol','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas','dua belas','tiga belas','empat belas','lima belas','enam belas','tujuh belas','delapan belas','sembilan belas','dua puluh'];
+function flip(c){if(c.classList.contains('open')||c.classList.contains('ok'))return;const pg=c.closest('.pg');if(pg.querySelectorAll('.mc.open').length>=2)return;c.classList.add('open');say(c.dataset.m);const o=pg.querySelectorAll('.mc.open');if(o.length==2){if(o[0].dataset.m==o[1].dataset.m){o.forEach(x=>{x.classList.remove('open');x.classList.add('ok')});setTimeout(()=>say('Cocok! Hebat!'),800)}else setTimeout(()=>o.forEach(x=>x.classList.remove('open')),1000)}}
+const G=s=>s.split(',').map(x=>{x=x.trim();const i=x.indexOf(' ');return[x.slice(0,i),x.slice(i+1)]});
+const HUR=G('🍎 Apel,⚽ Bola,🌶️ Cabai,🎲 Dadu,🍦 Es krim,📷 Foto,🐘 Gajah,🐯 Harimau,🐟 Ikan,🍊 Jeruk,🐱 Kucing,🐝 Lebah,🚗 Mobil,🍍 Nanas,🌊 Ombak,🍌 Pisang,🐑 Qurban,🚀 Roket,🐄 Sapi,🎩 Topi,🐍 Ular,🏺 Vas,🥕 Wortel,🎹 Xilofon,🪀 Yoyo,🦓 Zebra');
+const VOK=G('🍎 Apel,🐟 Ikan,🐍 Ular,🍦 Es krim,🌊 Ombak');
+const COL=[['Merah','#e53935'],['Oranye','#fb8c00'],['Kuning','#fdd835'],['Hijau','#43a047'],['Biru','#1e88e5'],['Ungu','#8e24aa'],['Pink','#ec407a'],['Cokelat','#6d4c41']];
+const P=[
+{t:'Worksheet Anak Ceria',c:'#ff6b6b',k:'g',sub:'Ayo belajar sambil bermain! Sentuh gambar untuk mendengar suaranya 🔊',d:G('🦁 Singa,🍎 Apel,🚗 Mobil,🐘 Gajah,🌈 Pelangi,🎈 Balon,🐠 Ikan,🍌 Pisang,🚀 Roket,🐱 Kucing,🌻 Bunga matahari,⚽ Bola,🦋 Kupu-kupu,🍓 Stroberi,🐶 Anjing,⭐ Bintang')},
+{t:'Angka 1 – 5',c:'#ff8a65',k:'n',a:[1,2,3,4,5],e:['🍎','🐥','🎈','🦋','🚗'],sub:'Sentuh gambar untuk berhitung!'},
+{t:'Angka 6 – 10',c:'#ffb300',k:'n',a:[6,7,8,9,10],e:['🍓','🐟','🌸','🐢','🍩'],sub:'Sentuh gambar untuk berhitung!'},
+{t:'Huruf A – O',c:'#43a047',k:'h',d:HUR.slice(0,15)},
+{t:'Huruf P – Z dan Vokal',c:'#26a69a',k:'h',d:HUR.slice(15).concat(VOK)},
+{t:'Mengenal Buah',c:'#e53935',k:'g',d:G('🍎 Apel,🍌 Pisang,🍇 Anggur,🍉 Semangka,🍊 Jeruk,🍓 Stroberi,🍍 Nanas,🥭 Mangga,🍐 Pir,🍑 Persik,🍒 Ceri,🥝 Kiwi,🍋 Lemon,🥥 Kelapa,🫐 Blueberi,🍈 Melon')},
+{t:'Mengenal Sayuran',c:'#7cb342',k:'g',d:G('🥕 Wortel,🌽 Jagung,🍅 Tomat,🥦 Brokoli,🥔 Kentang,🍆 Terong,🧅 Bawang merah,🧄 Bawang putih,🌶️ Cabai,🥒 Timun,🥬 Sawi,🍄 Jamur,🫑 Paprika,🫘 Kacang,🍠 Ubi,🥜 Kacang tanah')},
+{t:'Binatang Darat',c:'#ef6c00',k:'g',d:G('🐱 Kucing,🐶 Anjing,🐮 Sapi,🐷 Babi,🐴 Kuda,🐘 Gajah,🦁 Singa,🐯 Harimau,🐒 Monyet,🦒 Jerapah,🐑 Domba,🐰 Kelinci,🐻 Beruang,🦓 Zebra,🐐 Kambing,🦌 Rusa')},
+{t:'Binatang Air dan Burung',c:'#039be5',k:'g',d:G('🐟 Ikan,🐠 Ikan hias,🐬 Lumba-lumba,🐳 Paus,🦈 Hiu,🐙 Gurita,🦀 Kepiting,🦐 Udang,🐢 Kura-kura,🐸 Katak,🦆 Bebek,🐓 Ayam jago,🦅 Elang,🦉 Burung hantu,🦜 Burung beo,🕊️ Merpati')},
+{t:'Serangga dan Reptil',c:'#8d6e63',k:'g',d:G('🐝 Lebah,🦋 Kupu-kupu,🐞 Kepik,🐜 Semut,🐛 Ulat,🕷️ Laba-laba,🦗 Jangkrik,🦂 Kalajengking,🐌 Siput,🪰 Lalat,🦟 Nyamuk,🪲 Kumbang,🪳 Kecoa,🦎 Kadal,🐍 Ular,🐊 Buaya')},
+{t:'Organ Tubuh',c:'#ec407a',k:'g',d:G('👁️ Mata,👂 Telinga,👃 Hidung,👄 Mulut,🦷 Gigi,👅 Lidah,✋ Tangan,🦶 Kaki,🧠 Otak,🫀 Jantung,🫁 Paru-paru,🦴 Tulang,💪 Lengan,🦵 Paha,🖐️ Jari,👣 Telapak kaki')},
+{t:'Benda di Rumah',c:'#8e24aa',k:'g',d:G('🪑 Kursi,🛏️ Tempat tidur,🚪 Pintu,🪟 Jendela,📺 Televisi,🛋️ Sofa,⏰ Jam,💡 Lampu,🪞 Cermin,🧹 Sapu,🚿 Pancuran,🍳 Wajan,🥄 Sendok,🍴 Garpu,🔑 Kunci,📞 Telepon')},
+{t:'Benda di Sekolah',c:'#3949ab',k:'g',d:G('📚 Buku,📖 Buku cerita,✏️ Pensil,🖍️ Krayon,✂️ Gunting,📏 Penggaris,🎒 Tas,🖊️ Pulpen,📝 Catatan,🎨 Palet cat,📐 Penggaris segitiga,🔬 Mikroskop,🧮 Sempoa,🗒️ Kertas,🔔 Lonceng,🏫 Sekolah')},
+{t:'Kendaraan',c:'#e65100',k:'g',d:G('🚗 Mobil,🚌 Bus,🚲 Sepeda,🏍️ Motor,🚂 Kereta api,✈️ Pesawat,🚁 Helikopter,🚢 Kapal,🚒 Mobil pemadam,🚑 Ambulans,🚓 Mobil polisi,🚜 Traktor,🛵 Skuter,🚕 Taksi,🚀 Roket,⛵ Perahu layar')},
+{t:'Warna dan Bentuk',c:'#5e35b1',k:'g',d:G('🔴 Lingkaran merah,🟠 Lingkaran oranye,🟡 Lingkaran kuning,🟢 Lingkaran hijau,🔵 Lingkaran biru,🟣 Lingkaran ungu,🟤 Lingkaran cokelat,⚫ Lingkaran hitam,⚪ Lingkaran putih,🟥 Persegi merah,🟦 Persegi biru,🟩 Persegi hijau,⭐ Bintang,❤️ Hati,🔺 Segitiga,🔷 Belah ketupat')},
+{t:'Cuaca dan Alam',c:'#00acc1',k:'g',d:G('☀️ Matahari,🌙 Bulan,⭐ Bintang,☁️ Awan,🌧️ Hujan,⛈️ Petir,🌈 Pelangi,❄️ Salju,🌪️ Angin topan,🔥 Api,💧 Air,🌊 Ombak,🌳 Pohon,🌸 Bunga sakura,🌻 Bunga matahari,⛰️ Gunung')},
+{t:'Pakaian dan Aksesori',c:'#d81b60',k:'g',d:G('👕 Kaos,👖 Celana,👗 Gaun,🧢 Topi,🧦 Kaus kaki,👟 Sepatu,🧤 Sarung tangan,🧣 Syal,🧥 Jaket,👒 Topi jerami,👓 Kacamata,⌚ Jam tangan,🎩 Topi tinggi,👔 Kemeja,🩳 Celana pendek,👘 Kimono')},
+{t:'Mewarnai: Binatang',c:'#f4511e',k:'w',sub:'Pilih warna, lalu sentuh gambar!',d:G('🐱 Kucing,🐶 Anjing,🐘 Gajah,🦁 Singa,🐠 Ikan,🦋 Kupu-kupu,🐢 Kura-kura,🐸 Katak,🐝 Lebah,🐞 Kepik,🦒 Jerapah,🐰 Kelinci,🐙 Gurita,🦆 Bebek,🐻 Beruang,🐬 Lumba-lumba')},
+{t:'Mewarnai: Buah dan Benda',c:'#00897b',k:'w',sub:'Pilih warna, lalu sentuh gambar!',d:G('🍎 Apel,🍌 Pisang,🍉 Semangka,🍓 Stroberi,🍍 Nanas,🍇 Anggur,🚗 Mobil,🚀 Roket,⛵ Perahu,🏠 Rumah,🌳 Pohon,🌸 Bunga,☀️ Matahari,🎈 Balon,⭐ Bintang,🎁 Hadiah')},
+{t:'Angka 11 – 20',c:'#6d4c41',k:'n',a:[11,12,13,14,15,16,17,18,19,20],e:['🍎','🐥','🎈','🦋','🚗','🍓','🐟','🌸','🐢','🍩'],sub:'Sentuh gambar untuk berhitung sampai dua puluh!'},
+{t:'Huruf Kecil a – z',c:'#1e88e5',k:'l',d:HUR,sub:'Kenali huruf kecil bersama gambarnya!'},
+{t:'Game Cari Pasangan',c:'#8e24aa',k:'m',sub:'Buka dua kartu. Kalau gambarnya sama, kamu menang!',d:G('🐱 Kucing,🍎 Apel,🚗 Mobil,🐘 Gajah,🍌 Pisang,🐟 Ikan,🚀 Roket,🦋 Kupu-kupu')},
+{t:'Sertifikat Juara',c:'#fbc02d',k:'s',d:G('🏆 Piala,🥇 Medali emas,⭐ Bintang,🌟 Bintang bersinar,🎉 Pesta,🎊 Konfeti,🏅 Medali,👏 Tepuk tangan,🎈 Balon,🎁 Hadiah,🦄 Unicorn,🌈 Pelangi,🍭 Permen,🧸 Boneka beruang,🎖️ Lencana,💯 Seratus')}
+];
+let mute=false,cur=0,ac,pal={};
+function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=520+Math.random()*400;o.type='triangle';g.gain.value=.15;g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.25);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.25)}catch(e){}}
+function say(t,el){if(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}if(mute)return;beep();try{const ss=speechSynthesis;const sp=()=>{const u=new SpeechSynthesisUtterance(t);u.lang='id-ID';u.rate=.8;u.pitch=1.2;const v=ss.getVoices().find(v=>/^id/i.test(v.lang.replace('_','-')));if(v)u.voice=v;window._u=u;ss.speak(u)};if(ss.speaking||ss.pending){ss.cancel();setTimeout(sp,80)}else sp()}catch(e){}}
+const cell=(e,l,s,i,x='')=>`<div class="cell ${x}" data-s="${s}" style="--i:${i}"><div class="em">${e}</div><div class="lb">${l}</div></div>`;
+const app=document.getElementById('app');
+if(!app.children.length)P.forEach((p,n)=>{
+ const d=document.createElement('section');d.className='pg'+(n?'':' on');d.style.setProperty('--c',p.c);
+ let h=`<h1>${p.t}</h1><p class="sub">${p.sub||'Sentuh gambar untuk mendengar suaranya 🔊'}</p>`;
+ if(p.k=='n'){p.a.forEach((a,j)=>{h+=`<div class="row"><div class="num" data-s="Angka ${NM[a]}">${a}</div><b>${NM[a]}</b>`;for(let q=1;q<=a;q++)h+=`<span class="em" style="--i:${q+j}" data-s="${NM[q]}">${p.e[j]}</span>`;h+='</div>'})}
+ else if(p.k=='w'){h+='<div class="pal">'+COL.map((c,i)=>`<i data-c="${c[1]}" data-n="${c[0]}" style="background:${c[1]}"></i>`).join('')+'</div><div class="grid w">'+p.d.map((x,i)=>cell(x[0],x[1],x[1],i)).join('')+'</div>'}
+ else if(p.k=='l'){h+='<div class="grid">'+p.d.map((x,i)=>{const L=x[1][0].toLowerCase();return cell(x[0],L+' - '+x[1].toLowerCase(),'Huruf kecil '+L+'. '+L+' untuk '+x[1],i)}).join('')+'</div>'}
+ else if(p.k=='m'){h+='<div class="grid">'+p.d.concat(p.d).sort(()=>Math.random()-.5).map((x,i)=>`<div class="cell mc" data-m="${x[1]}" style="--i:${i}"><div class="em">${x[0]}</div><div class="lb">${x[1]}</div></div>`).join('')+'</div>'}
+ else if(p.k=='s'){h+='<div class="cert"><p>Hebat! Kamu sudah menyelesaikan semua halaman. Tulis namamu:</p><input placeholder="Nama kamu" aria-label="Nama"><p><b>Bintang untukmu, Juara Kecil!</b></p></div><div class="grid">'+p.d.map((x,i)=>cell(x[0],x[1],'Hebat! '+x[1],i)).join('')+'</div>'}
+ else h+='<div class="grid">'+p.d.map((x,i)=>p.k=='h'?cell(x[0],x[1][0]+x[1][0].toLowerCase()+' - '+x[1],'Huruf '+x[1][0]+'. '+x[1][0]+' untuk '+x[1],i):cell(x[0],x[1],x[1],i)).join('')+'</div>';
+ d.innerHTML=h;app.appendChild(d)});
+app.addEventListener('click',e=>{
+ const pl=e.target.closest('.pal i');
+ if(pl){pl.parentNode.querySelectorAll('i').forEach(i=>i.classList.remove('sel'));pl.classList.add('sel');pal={c:pl.dataset.c,n:pl.dataset.n};say(pal.n);return}
+ const mc=e.target.closest('.mc');if(mc){flip(mc);return}
+ const c=e.target.closest('[data-s]');if(!c)return;
+ if(c.closest('.w')){const pg=c.closest('.pg');if(!pal.c){say('Pilih warna dulu ya');return}c.style.setProperty('--k',pal.c);c.classList.add('done');say(pal.n+'! '+c.dataset.s,c)}
+ else say(c.dataset.s,c.querySelector('.em')?c.querySelector('.em'):c)});
+const ind=document.getElementById('ind');
+function go(n){cur=(n+P.length)%P.length;document.querySelectorAll('.pg').forEach((p,i)=>p.classList.toggle('on',i==cur));ind.textContent='Halaman '+(cur+1)+' / '+P.length;scrollTo(0,0)}
+pv.onclick=()=>go(cur-1);nx.onclick=()=>go(cur+1);
+mt.onclick=()=>{mute=!mute;mt.textContent=mute?'🔇':'🔊'};
+addEventListener('keydown',e=>{if(e.target.tagName=='INPUT')return;if(e.key=='ArrowRight')go(cur+1);if(e.key=='ArrowLeft')go(cur-1)});
+pr.onclick=async()=>{
+ const c=document.documentElement.cloneNode(true);
+ const iv=[...document.querySelectorAll('input')].map(i=>i.value);
+ c.querySelectorAll('input').forEach((i,k)=>i.setAttribute('value',iv[k]));
+ const html='<!DOCTYPE html>'+c.outerHTML;
+ try{const d=window.claude&&await claude.use('downloads');if(d){await d.save({filename:'worksheet-anak-siap-cetak.html',data:html});return}}catch(e){if(e&&e.code=='declined')return}
+ print()};
+go(0);
+</script></body></html>
